@@ -1,43 +1,24 @@
+
 const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
-
-
 app.use(bodyParser.json());
 
-
-app.get('/',(req,res)=>{
-    res.write("Hello World");
-    res.end();
-})
-
-let response={
-
-};
-
-app.get('/bfhl',(req,res)=>{
-    let list=JSON.stringify(response);
-    res.write(list);
-    res.end();
-})
+let response = {};
 
 app.post('/bfhl', (req, res) => {
+    try {
+        const data = req.body;
 
-        const data = req.body.data;
-
-
-        const user_id = "anjali_verma_2111981265";
-
-
-        const email = "anjali1265.be21@chitkarauniversity.edu.in";
-        const roll_number = "2111981265";
+        const user_id = data.user_id || "anjali_verma"; 
+        const email = data.email || "anjali1265.be21@chitkarauniversity.edu.in";
+        const roll_number = data.roll_number || "211198265";
         const odd_numbers = [];
         const even_numbers = [];
         const alphabets = [];
 
-
-        data.forEach(element => {
+        data.data.forEach(element => {
             if (typeof element === 'string' && isNaN(element)) {
                 alphabets.push(element.toUpperCase());
             } else if (!isNaN(element)) {
@@ -49,7 +30,6 @@ app.post('/bfhl', (req, res) => {
             }
         });
 
-
         response = {
             is_success: true,
             user_id: user_id,
@@ -59,11 +39,15 @@ app.post('/bfhl', (req, res) => {
             even_numbers: even_numbers,
             alphabets: alphabets
         };
+
         res.json(response);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
-
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
